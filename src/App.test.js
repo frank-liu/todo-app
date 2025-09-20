@@ -46,7 +46,6 @@ describe("Add button functionality", () => {
 
     await userEvent.click(addButton);
 
-    // Should not find any todo items
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
   });
 
@@ -59,9 +58,7 @@ describe("Add button functionality", () => {
     await userEvent.type(input, "   ");
     await userEvent.click(addButton);
 
-    // Should not find any todo items
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
-    // Input should be cleared
     expect(input.value).toBe("");
   });
 
@@ -204,7 +201,6 @@ describe("Advanced button interactions", () => {
     await userEvent.type(input, "Quick delete test");
     await userEvent.click(addButton);
 
-    // Immediately delete the todo
     const deleteButton = screen.getByRole("button", { name: /delete/i });
     await userEvent.click(deleteButton);
 
@@ -220,9 +216,8 @@ describe("Advanced button interactions", () => {
 
     await userEvent.type(input, "Focus test");
     await userEvent.click(addButton);
-
-    // Input should still be available for immediate typing
     await userEvent.type(input, "Second todo");
+
     expect(input.value).toBe("Second todo");
   });
 
@@ -232,7 +227,6 @@ describe("Advanced button interactions", () => {
     const input = screen.getByPlaceholderText(/add a new to-do/i);
     const addButton = screen.getByRole("button", { name: /add/i });
 
-    // Add three todos
     await userEvent.type(input, "Todo A");
     await userEvent.click(addButton);
 
@@ -242,7 +236,6 @@ describe("Advanced button interactions", () => {
     await userEvent.type(input, "Todo C");
     await userEvent.click(addButton);
 
-    // Delete middle todo (Todo B)
     let deleteButtons = screen.getAllByRole("button", { name: /delete/i });
     await userEvent.click(deleteButtons[1]);
 
