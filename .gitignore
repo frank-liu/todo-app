@@ -11,6 +11,11 @@
 # production
 /build
 
+
+!.vscode/launch.json
+!.vscode/tasks.json
+.vscode/
+
 # misc
 .DS_Store
 .env.local
