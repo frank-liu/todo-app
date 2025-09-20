@@ -46,7 +46,6 @@ export const App = () => {
 
   return (
     <div className="App">
-      {/* TODO: make the heading bold */}
       <h1>My To-Do List</h1>
       <div className="input-container">
         <input
