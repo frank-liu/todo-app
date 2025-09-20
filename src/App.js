@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 
-// TODO: add unit tests for this file
 export const App = () => {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -10,7 +9,7 @@ export const App = () => {
     setInputValue(e.target.value);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleAddTodo();
     }
@@ -18,7 +17,14 @@ export const App = () => {
 
   const handleAddTodo = () => {
     if (inputValue.trim()) {
-      setTodos([...todos, { text: inputValue, completed: false }]);
+      setTodos([
+        ...todos,
+        {
+          id: Date.now() + Math.random(), // Generate unique ID
+          text: inputValue,
+          completed: false,
+        },
+      ]);
       setInputValue("");
     } else {
       // Clear input if it contains only whitespace
@@ -26,16 +32,16 @@ export const App = () => {
     }
   };
 
-  const handleToggleTodo = (index) => {
-    const newTodos = [...todos];
-    newTodos[index].completed = !newTodos[index].completed;
-    setTodos(newTodos);
+  const handleToggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
   };
 
-  const handleDeleteTodo = (index) => {
-    const newTodos = [...todos];
-    newTodos.splice(index, 1);
-    setTodos(newTodos);
+  const handleDeleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
@@ -46,16 +52,16 @@ export const App = () => {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder="Add a new to-do..."
         />
         <button onClick={handleAddTodo}>Add</button>
       </div>
       <ul>
-        {todos.map((todo, index) => (
-          <li key={index} className={todo.completed ? "completed" : ""}>
-            <span onClick={() => handleToggleTodo(index)}>{todo.text}</span>
-            <button onClick={() => handleDeleteTodo(index)}>Delete</button>
+        {todos.map((todo) => (
+          <li key={todo.id} className={todo.completed ? "completed" : ""}>
+            <span onClick={() => handleToggleTodo(todo.id)}>{todo.text}</span>
+            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
           </li>
         ))}
       </ul>
