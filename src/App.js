@@ -10,9 +10,18 @@ export const App = () => {
     setInputValue(e.target.value);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleAddTodo();
+    }
+  };
+
   const handleAddTodo = () => {
     if (inputValue.trim()) {
       setTodos([...todos, { text: inputValue, completed: false }]);
+      setInputValue("");
+    } else {
+      // Clear input if it contains only whitespace
       setInputValue("");
     }
   };
@@ -37,6 +46,7 @@ export const App = () => {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
           placeholder="Add a new to-do..."
         />
         <button onClick={handleAddTodo}>Add</button>
