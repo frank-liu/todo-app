@@ -3,10 +3,10 @@ import "./App.css";
 
 export const App = () => {
   const [todos, setTodos] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [taskInputValue, setTaskInputValue] = useState("");
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+    setTaskInputValue(e.target.value);
   };
 
   const handleKeyDown = (e) => {
@@ -16,19 +16,19 @@ export const App = () => {
   };
 
   const handleAddTodo = () => {
-    if (inputValue.trim()) {
+    if (taskInputValue.trim()) {
       setTodos([
         ...todos,
         {
           id: Date.now() + Math.random(), // Generate unique ID
-          text: inputValue,
+          text: taskInputValue,
           completed: false,
         },
       ]);
-      setInputValue("");
+      setTaskInputValue("");
     } else {
       // Clear input if it contains only whitespace
-      setInputValue("");
+      setTaskInputValue("");
     }
   };
 
@@ -50,7 +50,7 @@ export const App = () => {
       <div className="input-container">
         <input
           type="text"
-          value={inputValue}
+          value={taskInputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Add a new to-do..."
