@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 
+// TODO: add unit tests for this file
 export const App = () => {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
