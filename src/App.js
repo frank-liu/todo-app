@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-function App() {
+export const App = () => {
   const [todos, setTodos] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -12,7 +12,7 @@ function App() {
   const handleAddTodo = () => {
     if (inputValue.trim()) {
       setTodos([...todos, { text: inputValue, completed: false }]);
-      setInputValue('');
+      setInputValue("");
     }
   };
 
@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>To-Do List</h1>
+      <h1>My To-Do List</h1>
       <div className="input-container">
         <input
           type="text"
@@ -42,10 +42,7 @@ function App() {
       </div>
       <ul>
         {todos.map((todo, index) => (
-          <li
-            key={index}
-            className={todo.completed ? 'completed' : ''}
-          >
+          <li key={index} className={todo.completed ? "completed" : ""}>
             <span onClick={() => handleToggleTodo(index)}>{todo.text}</span>
             <button onClick={() => handleDeleteTodo(index)}>Delete</button>
           </li>
@@ -53,6 +50,4 @@ function App() {
       </ul>
     </div>
   );
-}
-
-export default App;
+};
