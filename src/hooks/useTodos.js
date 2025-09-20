@@ -1,8 +1,5 @@
 import { useState, useCallback, useRef } from "react";
 
-// Internal ID generator scoped to this module
-let nextId = 1;
-
 /**
  * useTodos - Manages todo list state and handlers
  *
@@ -17,6 +14,8 @@ export const useTodos = () => {
   const [taskInputValue, setTaskInputValue] = useState("");
   // Mirror of the input value to avoid stale-closure issues during rapid clicks
   const inputValueRef = useRef("");
+  // Instance-scoped ID counter to avoid cross-instance/HMR leakage
+  const nextIdRef = useRef(1);
 
   const handleInputChange = useCallback((e) => {
     const v = e.target.value;
@@ -31,7 +30,7 @@ export const useTodos = () => {
       setTodos((prev) => [
         ...prev,
         {
-          id: nextId++,
+          id: nextIdRef.current++,
           text: current,
           completed: false,
         },
