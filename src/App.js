@@ -11,6 +11,8 @@ import "./App.css";
  * @component
  * @returns {JSX.Element} The rendered App component.
  */
+let nextId = 1;
+
 export const App = () => {
   const [todos, setTodos] = useState([]);
   const [taskInputValue, setTaskInputValue] = useState("");
@@ -30,7 +32,7 @@ export const App = () => {
       setTodos([
         ...todos,
         {
-          id: Date.now() + Math.random(), // Generate unique ID
+          id: nextId++, // Generate unique ID
           text: taskInputValue,
           completed: false,
         },
