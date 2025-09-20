@@ -1,6 +1,16 @@
 import { useState } from "react";
 import "./App.css";
 
+/**
+ * The main App component for the To-Do List application.
+ *
+ * This component manages the state of the to-do list, including the list of tasks
+ * and the input value for adding new tasks. It provides functionality to add, toggle,
+ * and delete tasks, and renders the UI for interacting with the to-do list.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered App component.
+ */
 export const App = () => {
   const [todos, setTodos] = useState([]);
   const [taskInputValue, setTaskInputValue] = useState("");
