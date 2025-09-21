@@ -17,6 +17,18 @@ export const useTodos = () => {
   // Instance-scoped ID counter to avoid cross-instance/HMR leakage
   const nextIdRef = useRef(1);
 
+  // Helpers to avoid duplication
+  const clearInput = useCallback(() => {
+    inputValueRef.current = "";
+    setTaskInputValue("");
+  }, []);
+
+  const nextId = useCallback(() => {
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
+    return id;
+  }, []);
+
   const handleInputChange = useCallback((e) => {
     const v = e.target.value;
     inputValueRef.current = v;
@@ -26,22 +38,20 @@ export const useTodos = () => {
   const handleAddTodo = useCallback(() => {
     const current = inputValueRef.current;
     const trimmed = current.trim();
-    if (trimmed) {
-      setTodos((prev) => [
-        ...prev,
-        {
-          id: nextIdRef.current++,
-          text: current,
-          completed: false,
-        },
-      ]);
-      inputValueRef.current = "";
-      setTaskInputValue("");
-    } else {
-      inputValueRef.current = "";
-      setTaskInputValue("");
+    if (!trimmed) {
+      clearInput();
+      return;
     }
-  }, []);
+    setTodos((prev) => [
+      ...prev,
+      {
+        id: nextId(),
+        text: current,
+        completed: false,
+      },
+    ]);
+    clearInput();
+  }, [clearInput, nextId]);
 
   const handleKeyDown = useCallback(
     (e) => {
