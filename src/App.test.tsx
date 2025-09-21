@@ -30,7 +30,9 @@ describe("Add button functionality", () => {
   test("clears input field after adding a todo", async () => {
     render(<App />);
 
-    const input = screen.getByPlaceholderText(/add a new to-do/i);
+    const input = screen.getByPlaceholderText(
+      /add a new to-do/i
+    ) as HTMLInputElement;
     const addButton = screen.getByRole("button", { name: /add/i });
 
     await userEvent.type(input, "Test todo item");
@@ -59,7 +61,7 @@ describe("Add button functionality", () => {
     await userEvent.click(addButton);
 
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
-    expect(input.value).toBe("");
+    expect((input as HTMLInputElement).value).toBe("");
   });
 
   test("adds multiple todos", async () => {
@@ -120,7 +122,6 @@ describe("Delete button functionality", () => {
     const input = screen.getByPlaceholderText(/add a new to-do/i);
     const addButton = screen.getByRole("button", { name: /add/i });
 
-    // Add multiple todos
     await userEvent.type(input, "First todo");
     await userEvent.click(addButton);
 
@@ -130,9 +131,8 @@ describe("Delete button functionality", () => {
     await userEvent.type(input, "Third todo");
     await userEvent.click(addButton);
 
-    // Delete the second todo
     const deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[1]); // Delete second item (index 1)
+    await userEvent.click(deleteButtons[1]);
 
     expect(screen.getByText("First todo")).toBeInTheDocument();
     expect(screen.queryByText("Second todo")).not.toBeInTheDocument();
@@ -145,22 +145,18 @@ describe("Delete button functionality", () => {
     const input = screen.getByPlaceholderText(/add a new to-do/i);
     const addButton = screen.getByRole("button", { name: /add/i });
 
-    // Add two todos
     await userEvent.type(input, "First todo");
     await userEvent.click(addButton);
 
     await userEvent.type(input, "Second todo");
     await userEvent.click(addButton);
 
-    // Delete first todo
     let deleteButtons = screen.getAllByRole("button", { name: /Delete / });
     await userEvent.click(deleteButtons[0]);
 
-    // Delete remaining todo
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
     await userEvent.click(deleteButtons[0]);
 
-    // No todos should remain
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
   });
 });
@@ -174,7 +170,7 @@ describe("Advanced button interactions", () => {
     await userEvent.type(input, "Todo via Enter key{enter}");
 
     expect(screen.getByText("Todo via Enter key")).toBeInTheDocument();
-    expect(input.value).toBe("");
+    expect((input as HTMLInputElement).value).toBe("");
   });
 
   test("Add button handles rapid clicks", async () => {
@@ -185,12 +181,10 @@ describe("Advanced button interactions", () => {
 
     await userEvent.type(input, "Rapid click test");
 
-    // Click multiple times rapidly
     await userEvent.click(addButton);
     await userEvent.click(addButton);
     await userEvent.click(addButton);
 
-    // Should only add one todo since input is cleared after first click
     const todoItems = screen.getAllByRole("listitem");
     expect(todoItems).toHaveLength(1);
     expect(screen.getByText("Rapid click test")).toBeInTheDocument();
@@ -217,7 +211,9 @@ describe("Advanced button interactions", () => {
   test("Add button preserves focus after adding todo", async () => {
     render(<App />);
 
-    const input = screen.getByPlaceholderText(/add a new to-do/i);
+    const input = screen.getByPlaceholderText(
+      /add a new to-do/i
+    ) as HTMLInputElement;
     const addButton = screen.getByRole("button", { name: /add/i });
 
     await userEvent.type(input, "Focus test");
@@ -245,16 +241,13 @@ describe("Advanced button interactions", () => {
     let deleteButtons = screen.getAllByRole("button", { name: /Delete / });
     await userEvent.click(deleteButtons[1]);
 
-    // Verify correct todos remain
     expect(screen.getByText("Todo A")).toBeInTheDocument();
     expect(screen.queryByText("Todo B")).not.toBeInTheDocument();
     expect(screen.getByText("Todo C")).toBeInTheDocument();
 
-    // Delete first remaining todo (Todo A)
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
     await userEvent.click(deleteButtons[0]);
 
-    // Only Todo C should remain
     expect(screen.queryByText("Todo A")).not.toBeInTheDocument();
     expect(screen.getByText("Todo C")).toBeInTheDocument();
   });
@@ -295,36 +288,32 @@ describe("Advanced button interactions", () => {
     const input = screen.getByPlaceholderText(/add a new to-do/i);
     const addButton = screen.getByRole("button", { name: /add/i });
 
-    // Add 5 todos
     for (let i = 1; i <= 5; i++) {
       await userEvent.type(input, `Todo ${i}`);
       await userEvent.click(addButton);
     }
 
-    // Verify all todos are present
     expect(screen.getAllByRole("listitem")).toHaveLength(5);
 
-    // Delete todos one by one from the end
     let deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[4]); // Delete Todo 5
+    await userEvent.click(deleteButtons[4]);
     expect(screen.getAllByRole("listitem")).toHaveLength(4);
 
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[3]); // Delete Todo 4
+    await userEvent.click(deleteButtons[3]);
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
 
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[2]); // Delete Todo 3
+    await userEvent.click(deleteButtons[2]);
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
 
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[1]); // Delete Todo 2
+    await userEvent.click(deleteButtons[1]);
     expect(screen.getAllByRole("listitem")).toHaveLength(1);
 
     deleteButtons = screen.getAllByRole("button", { name: /Delete / });
-    await userEvent.click(deleteButtons[0]); // Delete Todo 1
+    await userEvent.click(deleteButtons[0]);
 
-    // All todos should be deleted
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
   });
 
@@ -337,23 +326,19 @@ describe("Advanced button interactions", () => {
     await userEvent.type(input, "Accessibility test");
     await userEvent.click(addButton);
 
-    // Check initial state
     const toggleButton = screen.getByRole("button", {
       name: /Mark "Accessibility test" as complete/i,
     });
     expect(toggleButton).toHaveAttribute("aria-pressed", "false");
     expect(toggleButton).toHaveClass("toggle-button");
 
-    // Click to toggle
     await userEvent.click(toggleButton);
 
-    // Check toggled state
     const toggledButton = screen.getByRole("button", {
       name: /Mark "Accessibility test" as incomplete/i,
     });
     expect(toggledButton).toHaveAttribute("aria-pressed", "true");
 
-    // Verify completed styling is applied to the list item
     const listItem = screen.getByRole("listitem");
     expect(listItem).toHaveClass("completed");
   });
