@@ -45,6 +45,43 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
+## Web Vitals & Analytics
+
+This app includes optional Web Vitals reporting (CLS, FID, FCP, LCP, TTFB).
+
+- In development, metrics are logged to the console and a lightweight service worker at `public/mock-api.js` intercepts `POST /analytics` with a 204 response so you won't see network errors.
+- In production, metrics are sent to the endpoint defined by the environment variable `REACT_APP_ANALYTICS_URL` (falls back to `/analytics` if not set).
+
+Configure the endpoint by setting an environment variable before build:
+
+```bash
+# macOS/Linux (zsh/bash)
+export REACT_APP_ANALYTICS_URL="https://your-analytics.example.com/collect"
+
+# then build or start
+npm start
+# or
+npm run build
+```
+
+Alternatively, copy the example env file and edit it:
+
+```bash
+cp .env.example .env
+echo "REACT_APP_ANALYTICS_URL=https://your-analytics.example.com/collect" >> .env
+```
+
+Implementation details:
+- The handler uses `navigator.sendBeacon` when available, with a `fetch(..., { keepalive: true })` fallback.
+- The endpoint receives a JSON payload with the Web Vitals metric object.
+- To disable reporting entirely, remove the `reportWebVitals(sendToAnalytics)` call in `src/index.tsx`.
+
+Environment management:
+- Environment variables are centralized in `src/config/env.ts` and validated with [`zod`](https://github.com/colinhacks/zod) when available (falls back to simple coercion if zod isn't installed yet).
+- Preferred variables:
+	- `NODE_ENV`: `development` | `test` | `production` (injected by CRA)
+	- `REACT_APP_ANALYTICS_URL`: URL to receive metrics in production
+
 ### Code Splitting
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
