@@ -20,8 +20,6 @@ if (rootEl) {
 const sendToAnalytics: ReportHandler = (metric) => {
   const shouldSend =
     env.NODE_ENV === "production" || Boolean(env.REACT_APP_ANALYTICS_URL);
-  console.log("🚀 ~ sendToAnalytics ~ shouldSend:", shouldSend);
-  console.log(env);
 
   if (shouldSend) {
     try {
@@ -51,7 +49,7 @@ const sendToAnalytics: ReportHandler = (metric) => {
         "Content-Type": "application/json",
       };
       const hasGrafanaToken = Boolean(env.REACT_APP_GRAFANA_API_TOKEN);
-      console.log("🚀 ~ sendToAnalytics ~ hasGrafanaToken:", hasGrafanaToken);
+      
       if (hasGrafanaToken) {
         headers["Authorization"] = `Bearer ${env.REACT_APP_GRAFANA_API_TOKEN}`;
       }
@@ -61,7 +59,7 @@ const sendToAnalytics: ReportHandler = (metric) => {
       if (canUseBeacon) {
         const blob = new Blob([body], { type: "application/json" });
         navigator.sendBeacon(url, blob);
-        console.log("🚀 ~ sendToAnalytics ~ sentBeacon:", url);
+        
       } else {
         fetch(url, {
           method: "POST",

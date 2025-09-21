@@ -77,7 +77,7 @@ Implementation details:
 - To disable reporting entirely, remove the `reportWebVitals(sendToAnalytics)` call in `src/index.tsx`.
 
 Environment management:
-- Environment variables are centralized in `src/config/env.ts` and validated with [`zod`](https://github.com/colinhacks/zod) when available (falls back to simple coercion if zod isn't installed yet).
+- Environment variables are centralized in `src/config/env.ts` with lightweight validation (accepts http(s) URLs or root-relative paths like `/api/annotations`).
 - Preferred variables:
 	- `NODE_ENV`: `development` | `test` | `production` (injected by CRA)
 	- `REACT_APP_ANALYTICS_URL`: URL to receive metrics (dev and prod when set). In dev, a relative path is proxied via CRA `proxy`.
