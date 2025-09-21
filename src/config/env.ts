@@ -1,42 +1,31 @@
 type Env = {
     NODE_ENV: 'development' | 'test' | 'production';
     REACT_APP_ANALYTICS_URL?: string;
+    REACT_APP_GRAFANA_API_TOKEN?: string;
 };
-
-let z: any = null;
-try {
-    // Use runtime require so TypeScript doesn't need 'zod' types installed immediately
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    z = require('zod');
-} catch {
-    z = null;
-}
 
 function coerceNodeEnv(value: any): Env['NODE_ENV'] {
     return value === 'production' || value === 'test' ? value : 'development';
 }
 
-function parseWithZod(): Env | null {
-    if (!z) return null;
-    try {
-        const schema = z.object({
-            NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-            REACT_APP_ANALYTICS_URL: z.string().url().optional(),
-        });
-        const result = schema.safeParse({
-            NODE_ENV: process.env.NODE_ENV,
-            REACT_APP_ANALYTICS_URL: process.env.REACT_APP_ANALYTICS_URL,
-        });
-        if (result.success) return result.data as Env;
-        // eslint-disable-next-line no-console
-        console.warn(`Invalid environment variables: ${result.error.toString()}`);
-    } catch { }
-    return null;
+function isLikelyUrlOrPath(value: string): boolean {
+    // Accept absolute http(s) URLs or root-relative paths (e.g., /api/annotations)
+    return /^https?:\/\//i.test(value) || value.startsWith('/');
 }
 
-const fallback: Env = {
-    NODE_ENV: coerceNodeEnv(process.env.NODE_ENV),
-    REACT_APP_ANALYTICS_URL: process.env.REACT_APP_ANALYTICS_URL,
-};
+function buildEnv(): Env {
+    const rawUrl = process.env.REACT_APP_ANALYTICS_URL?.trim();
+    const url = rawUrl && isLikelyUrlOrPath(rawUrl) ? rawUrl : undefined;
+    if (rawUrl && !url) {
+        // eslint-disable-next-line no-console
+        console.warn('[env] Ignoring invalid REACT_APP_ANALYTICS_URL:', rawUrl);
+    }
+    const token = process.env.REACT_APP_GRAFANA_API_TOKEN?.trim();
+    return {
+        NODE_ENV: coerceNodeEnv(process.env.NODE_ENV),
+        REACT_APP_ANALYTICS_URL: url,
+        REACT_APP_GRAFANA_API_TOKEN: token || undefined,
+    };
+}
 
-export const env: Env = parseWithZod() ?? fallback;
+export const env: Env = buildEnv();

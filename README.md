@@ -49,8 +49,8 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 This app includes optional Web Vitals reporting (CLS, FID, FCP, LCP, TTFB).
 
-- In development, metrics are logged to the console and a lightweight service worker at `public/mock-api.js` intercepts `POST /analytics` with a 204 response so you won't see network errors.
-- In production, metrics are sent to the endpoint defined by the environment variable `REACT_APP_ANALYTICS_URL` (falls back to `/analytics` if not set).
+- In development, metrics are logged to the console by default. If `REACT_APP_ANALYTICS_URL` is set, metrics are POSTed there and the mock API service worker is not registered.
+- In production, metrics are always sent to the endpoint defined by `REACT_APP_ANALYTICS_URL` (falls back to `/analytics` if not set).
 
 Configure the endpoint by setting an environment variable before build:
 
@@ -72,7 +72,7 @@ echo "REACT_APP_ANALYTICS_URL=https://your-analytics.example.com/collect" >> .en
 ```
 
 Implementation details:
-- The handler uses `navigator.sendBeacon` when available, with a `fetch(..., { keepalive: true })` fallback.
+- The handler uses `navigator.sendBeacon` when available and no custom headers are required, with a `fetch(..., { keepalive: true })` fallback. If an Authorization header is needed, `fetch` is used.
 - The endpoint receives a JSON payload with the Web Vitals metric object.
 - To disable reporting entirely, remove the `reportWebVitals(sendToAnalytics)` call in `src/index.tsx`.
 
@@ -80,7 +80,34 @@ Environment management:
 - Environment variables are centralized in `src/config/env.ts` and validated with [`zod`](https://github.com/colinhacks/zod) when available (falls back to simple coercion if zod isn't installed yet).
 - Preferred variables:
 	- `NODE_ENV`: `development` | `test` | `production` (injected by CRA)
-	- `REACT_APP_ANALYTICS_URL`: URL to receive metrics in production
+	- `REACT_APP_ANALYTICS_URL`: URL to receive metrics (dev and prod when set). In dev, a relative path is proxied via CRA `proxy`.
+	- `REACT_APP_GRAFANA_API_TOKEN` (optional): Bearer token added when sending to protected endpoints like Grafana.
+
+### Sending metrics to Grafana
+
+Two simple options:
+
+1) Grafana Annotations API (quick visual marks)
+
+- Set in `.env`:
+
+	- `REACT_APP_ANALYTICS_URL=/api/annotations` (recommended in dev; CRA proxies to the Grafana server defined in `package.json` → `proxy`)
+	- `REACT_APP_GRAFANA_API_TOKEN=...` (optional if your Grafana requires auth)
+
+- In production, set a full URL (e.g., `https://grafana.example.com/api/annotations`) and token as needed.
+
+- The app will transform the Web Vitals metric into a Grafana annotation payload:
+	- `time`: current timestamp
+	- `tags`: `["web-vitals", metricName]`
+	- `text`: compact JSON summary of key fields
+
+2) Raw metric to custom endpoint
+
+- If you run Loki, Prometheus Pushgateway, or OTLP via Grafana Alloy, point `REACT_APP_ANALYTICS_URL` to your gateway and handle the JSON metric accordingly on the server side. The app sends the original web-vitals metric JSON when the URL does not include `/api/annotations`.
+
+Mock API behavior in development:
+
+- The service worker at `public/mock-api.js` is registered only when `REACT_APP_ANALYTICS_URL` is NOT set. This prevents it from intercepting requests when you point metrics to Grafana or another service.
 
 ### Code Splitting
 
