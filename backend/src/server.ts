@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { annotationsRouter } from './routes/annotations';
 import { healthRouter } from './routes/health';
+import { metricsRouter } from './routes/metrics';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/health', healthRouter);
 app.use('/api/annotations', annotationsRouter);
+app.use('/metrics', metricsRouter);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -44,7 +46,7 @@ app.use('*', (req: express.Request, res: express.Response) => {
 
 const server = app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-    console.log(`📊 Grafana URL: ${process.env.GRAFANA_URL || 'http://localhost:3001'}`);
+    console.log(`📊 Grafana URL: ${process.env.GRAFANA_URL || 'http://localhost:6000'}`);
     console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 });
 

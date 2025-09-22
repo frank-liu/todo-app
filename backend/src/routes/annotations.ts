@@ -1,4 +1,5 @@
 import express from 'express';
+import { recordWebVitalMetric, parseWebVitalFromText } from '../services/metrics';
 
 const router = express.Router();
 
@@ -45,6 +46,15 @@ router.post('/', async (req: express.Request, res: express.Response): Promise<vo
             text: grafanaAnnotation.text,
             time: new Date(grafanaAnnotation.time).toISOString()
         });
+
+        // Record metrics for Prometheus
+        const webVitalMetric = parseWebVitalFromText(grafanaAnnotation.text, grafanaAnnotation.tags);
+        if (webVitalMetric) {
+            recordWebVitalMetric(webVitalMetric);
+            console.log('✅ Recorded Web Vital metric for Prometheus:', webVitalMetric);
+        } else {
+            console.log('⚠️ Could not parse Web Vital metric from:', grafanaAnnotation.text);
+        }
 
         // Get Grafana configuration
         const grafanaUrl = process.env.GRAFANA_URL || 'http://localhost:3001';
