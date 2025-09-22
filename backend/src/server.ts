@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { annotationsRouter } from './routes/annotations';
 import { healthRouter } from './routes/health';
 import { metricsRouter } from './routes/metrics';
+import { webVitalsRouter } from './routes/webvitals';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/health', healthRouter);
 app.use('/api/annotations', annotationsRouter);
+app.use('/api/webvitals', webVitalsRouter);
 app.use('/metrics', metricsRouter);
 
 // Error handling middleware

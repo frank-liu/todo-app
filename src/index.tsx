@@ -25,9 +25,19 @@ const sendToAnalytics: ReportHandler = (metric) => {
     try {
       const url = env.REACT_APP_ANALYTICS_URL || "/analytics";
 
-      // If posting to Grafana annotations API, transform payload accordingly
-      const isGrafanaAnnotations = url.includes("/api/annotations");
-      const payload = isGrafanaAnnotations
+      // Send directly to /api/webvitals for Prometheus ingestion
+      const isDirectWebVitals = url.includes("/api/webvitals");
+      const payload = isDirectWebVitals
+        ? {
+            name: metric.name,
+            value: metric.value,
+            id: metric.id,
+            delta: (metric as any).delta,
+            navigationType: (metric as any).navigationType,
+            rating: (metric as any).rating,
+          }
+        : // Legacy Grafana annotations format
+        url.includes("/api/annotations")
         ? {
             time: Date.now(),
             tags: ["web-vitals", metric.name],
