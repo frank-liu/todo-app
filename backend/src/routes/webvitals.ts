@@ -31,7 +31,7 @@ router.post('/', async (req: express.Request, res: express.Response): Promise<vo
         // Map web-vitals names to our metric types
         const metricTypeMap: { [key: string]: 'TTFB' | 'FCP' | 'LCP' | 'FID' | 'CLS' | 'INP' } = {
             'TTFB': 'TTFB',
-            'FCP': 'FCP', 
+            'FCP': 'FCP',
             'LCP': 'LCP',
             'FID': 'FID',
             'CLS': 'CLS',
@@ -40,8 +40,8 @@ router.post('/', async (req: express.Request, res: express.Response): Promise<vo
 
         const metricType = metricTypeMap[metric.name.toUpperCase()];
         if (!metricType) {
-            res.status(400).json({ 
-                error: 'Unknown metric type', 
+            res.status(400).json({
+                error: 'Unknown metric type',
                 supportedTypes: Object.keys(metricTypeMap)
             });
             return;
@@ -89,7 +89,7 @@ router.post('/', async (req: express.Request, res: express.Response): Promise<vo
 // Helper function to detect device type from User-Agent
 function detectDeviceType(userAgent: string): string {
     const ua = userAgent.toLowerCase();
-    
+
     if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) {
         return 'mobile';
     } else if (ua.includes('tablet') || ua.includes('ipad')) {
@@ -102,7 +102,7 @@ function detectDeviceType(userAgent: string): string {
 // Helper function to extract page info from request headers
 function extractPageFromHeaders(req: express.Request): string | null {
     const referer = req.headers.referer || req.headers.referrer as string;
-    
+
     if (referer) {
         try {
             const url = new URL(referer);
@@ -111,7 +111,7 @@ function extractPageFromHeaders(req: express.Request): string | null {
             return null;
         }
     }
-    
+
     return null;
 }
 
