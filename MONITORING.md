@@ -36,7 +36,7 @@ cd backend && npm start
 ```mermaid
 graph LR
     A[Todo App Frontend] -->|Web Vitals| B[Backend /api/webvitals]
-    B -->|Records metrics| C[Prometheus /metrics]
+    B -->|Records metrics| C[Backend /metrics endpoint]
     D[Prometheus Server] -->|Scrapes every 10s| C
     E[Grafana] -->|Queries| D
     E -->|Displays| F[Web Vitals Dashboard]
