@@ -49,7 +49,7 @@ const sendToAnalytics: ReportHandler = (metric) => {
         "Content-Type": "application/json",
       };
       const hasGrafanaToken = Boolean(env.REACT_APP_GRAFANA_API_TOKEN);
-      
+
       if (hasGrafanaToken) {
         headers["Authorization"] = `Bearer ${env.REACT_APP_GRAFANA_API_TOKEN}`;
       }
@@ -59,7 +59,6 @@ const sendToAnalytics: ReportHandler = (metric) => {
       if (canUseBeacon) {
         const blob = new Blob([body], { type: "application/json" });
         navigator.sendBeacon(url, blob);
-        
       } else {
         fetch(url, {
           method: "POST",
